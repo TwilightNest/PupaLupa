@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PupaLupaClient", "PupaLupaClient\PupaLupaClient.csproj", "{F6ED16BD-090D-4239-BFAF-3B514DD69BCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PupaLupaClient", "PupaLupaClient\PupaLupaClient.csproj", "{F6ED16BD-090D-4239-BFAF-3B514DD69BCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PupaLupaServer", "PupaLupaServer\PupaLupaServer.csproj", "{83C6485B-5094-4FA3-85B5-5B330644F55B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PupaLupaServer", "PupaLupaServer\PupaLupaServer.csproj", "{83C6485B-5094-4FA3-85B5-5B330644F55B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
