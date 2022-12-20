@@ -23,17 +23,24 @@ namespace PupaLupaServer.Controllers
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        [HttpGet("{data}")]
+        public async Task<ActionResult<User>> GetUser(string data)
         {
-            var user = await _context.Users.FindAsync(id);
+            var userByName = await _context.Users.FirstOrDefaultAsync(u => u.Login == data);
 
-            if (user == null)
+            if (userByName == null)
             {
-                return NotFound();
+                var userByEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == data);
+                if (userByEmail == null)
+                {
+                    var userByPhoneNumber = await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == data);
+                    if (userByPhoneNumber == null)
+                        return NotFound();
+                    else return userByPhoneNumber;
+                }
+                else return userByEmail;
             }
-
-            return user;
+            else return userByName;
         }
 
         // PUT: api/Users/5
@@ -90,7 +97,7 @@ namespace PupaLupaServer.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction("PostUser", user);
         }
 
         // DELETE: api/Users/5
