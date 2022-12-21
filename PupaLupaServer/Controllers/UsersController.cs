@@ -16,11 +16,11 @@ namespace PupaLupaServer.Controllers
         }
 
         // GET: api/Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        //{
+        //    return await _context.Users.ToListAsync();
+        //}
 
         // GET: api/Users/5
         [HttpGet("{data}")]
@@ -45,34 +45,34 @@ namespace PupaLupaServer.Controllers
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutUser(Guid id, User user)
+        //{
+        //    if (id != user.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(user).State = EntityState.Modified;
+        //    _context.Entry(user).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!UserExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -81,6 +81,11 @@ namespace PupaLupaServer.Controllers
         {
             user.Id = Guid.NewGuid();
             _context.Users.Add(user);
+            var userLocation = new UsersLocation();
+            userLocation.UserId = user.Id;
+            userLocation.Latitude = null;
+            userLocation.Longitude = null;
+            _context.UsersLocations.Add(userLocation);
             try
             {
                 await _context.SaveChangesAsync();
@@ -101,20 +106,20 @@ namespace PupaLupaServer.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteUser(Guid id)
+        //{
+        //    var user = await _context.Users.FindAsync(id);
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+        //    _context.Users.Remove(user);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool UserExists(Guid id)
         {
