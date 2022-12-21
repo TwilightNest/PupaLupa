@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace PupaLupaServer.Models.EF;
 
@@ -16,6 +14,8 @@ public partial class PupaLupaDbContext : DbContext
     }
 
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserFriend> UserFriends { get; set; }
 
     public virtual DbSet<UsersLocation> UsersLocations { get; set; }
 
@@ -38,6 +38,16 @@ public partial class PupaLupaDbContext : DbContext
                 .HasColumnName("login");
             entity.Property(e => e.Password).HasColumnName("password");
             entity.Property(e => e.PhoneNumber).HasColumnName("phoneNumber");
+        });
+
+        modelBuilder.Entity<UserFriend>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("Friends_PK");
+
+            entity.Property(e => e.UserId)
+                .ValueGeneratedNever()
+                .HasColumnName("userId");
+            entity.Property(e => e.FriendsIds).HasColumnName("friendsIds");
         });
 
         modelBuilder.Entity<UsersLocation>(entity =>
