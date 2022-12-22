@@ -85,8 +85,8 @@ namespace PupaLupaServer.Controllers
             //initialize userLocation
             var userLocation = new UsersLocation();
             userLocation.UserId = user.Id;
-            userLocation.Latitude = null;
-            userLocation.Longitude = null;
+            userLocation.Latitude = 0;
+            userLocation.Longitude = 0;
             _context.UsersLocations.Add(userLocation);
             //initialize userFriends
             var userFriend = new UserFriend();

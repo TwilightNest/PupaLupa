@@ -1,2 +1,4 @@
 # PupaLupa
-.NET MAUI (client) + WEB API (server) [BSUIR diploma]
+WEB API (.NET 6 server)
+PostgreSQL (database)
+[BSUIR diploma]
