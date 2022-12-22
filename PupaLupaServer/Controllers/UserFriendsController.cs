@@ -38,14 +38,9 @@ namespace PupaLupaServer.Controllers
 
         // PUT: api/UserFriends/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserFriend(Guid id, UserFriend userFriend)
+        [HttpPut]
+        public async Task<IActionResult> PutUserFriend(UserFriend userFriend)
         {
-            if (id != userFriend.UserId)
-            {
-                return BadRequest();
-            }
-
             _context.Entry(userFriend).State = EntityState.Modified;
 
             try
@@ -54,7 +49,7 @@ namespace PupaLupaServer.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserFriendExists(id))
+                if (!UserFriendExists(userFriend.UserId))
                 {
                     return NotFound();
                 }

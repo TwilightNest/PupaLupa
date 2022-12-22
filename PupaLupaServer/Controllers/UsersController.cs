@@ -79,13 +79,20 @@ namespace PupaLupaServer.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            //add user
             user.Id = Guid.NewGuid();
             _context.Users.Add(user);
+            //initialize userLocation
             var userLocation = new UsersLocation();
             userLocation.UserId = user.Id;
             userLocation.Latitude = null;
             userLocation.Longitude = null;
             _context.UsersLocations.Add(userLocation);
+            //initialize userFriends
+            var userFriend = new UserFriend();
+            userFriend.UserId = user.Id;
+            userFriend.FriendsIds = new Guid[0];
+            _context.UserFriends.Add(userFriend);
             try
             {
                 await _context.SaveChangesAsync();
