@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace PupaLupaServer.Models.EF;
 
@@ -15,6 +13,12 @@ public partial class PupaLupaDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Inbox> Inboxes { get; set; }
+
+    public virtual DbSet<InboxParticipant> InboxParticipants { get; set; }
+
+    public virtual DbSet<Message> Messages { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserFriend> UserFriends { get; set; }
@@ -27,6 +31,68 @@ public partial class PupaLupaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Inbox>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Inbox_PK");
+
+            entity.ToTable("Inbox");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.LastMessage).HasColumnName("lastMessage");
+            entity.Property(e => e.LastSentUserId).HasColumnName("lastSentUserId");
+        });
+
+        modelBuilder.Entity<InboxParticipant>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("InboxParticipants_PK");
+
+            entity.HasIndex(e => e.InboxId, "fki_InboxParticipants_Inbox_FK");
+
+            entity.HasIndex(e => e.SenderUserId, "fki_InboxParticipants_Users_FK");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.InboxId).HasColumnName("inboxId");
+            entity.Property(e => e.SenderUserId).HasColumnName("senderUserId");
+
+            entity.HasOne(d => d.Inbox).WithMany(p => p.InboxParticipants)
+                .HasForeignKey(d => d.InboxId)
+                .HasConstraintName("InboxParticipants_Inbox_FK");
+
+            entity.HasOne(d => d.SenderUser).WithMany(p => p.InboxParticipants)
+                .HasForeignKey(d => d.SenderUserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("InboxParticipants_Users_FK");
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Messages_PK");
+
+            entity.HasIndex(e => e.InboxId, "fki_Messages_Inbox_FK");
+
+            entity.HasIndex(e => e.ReceiverUserId, "fki_Messages_Users_FK");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("createdAt");
+            entity.Property(e => e.InboxId).HasColumnName("inboxId");
+            entity.Property(e => e.MessageBody).HasColumnName("messageBody");
+            entity.Property(e => e.ReceiverUserId).HasColumnName("receiverUserId");
+
+            entity.HasOne(d => d.Inbox).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.InboxId)
+                .HasConstraintName("Messages_Inbox_FK");
+
+            entity.HasOne(d => d.ReceiverUser).WithMany(p => p.Messages)
+                .HasForeignKey(d => d.ReceiverUserId)
+                .HasConstraintName("Messages_Users_FK");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("users_PK");
