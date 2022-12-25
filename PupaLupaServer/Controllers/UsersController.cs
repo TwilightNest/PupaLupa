@@ -82,17 +82,14 @@ namespace PupaLupaServer.Controllers
             //add user
             user.Id = Guid.NewGuid();
             _context.Users.Add(user);
-            //initialize userLocation
-            var userLocation = new UsersLocation();
-            userLocation.UserId = user.Id;
-            userLocation.Latitude = 0;
-            userLocation.Longitude = 0;
-            _context.UsersLocations.Add(userLocation);
-            //initialize userFriends
-            var userFriend = new UserFriend();
-            userFriend.UserId = user.Id;
-            userFriend.FriendsIds = new Guid[0];
-            _context.UserFriends.Add(userFriend);
+
+            //initialize location
+            var location = new Location();
+            location.UserId = user.Id;
+            location.Latitude = 0;
+            location.Longitude = 0;
+            _context.Locations.Add(location);
+
             try
             {
                 await _context.SaveChangesAsync();

@@ -6,42 +6,42 @@ namespace PupaLupaServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UserFriendsController : ControllerBase
+    public class LocationsController : ControllerBase
     {
         private readonly PupaLupaDbContext _context;
 
-        public UserFriendsController(PupaLupaDbContext context)
+        public LocationsController(PupaLupaDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/UserFriends
+        // GET: api/Locations
         //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<UserFriend>>> GetUserFriends()
+        //public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         //{
-        //    return await _context.UserFriends.ToListAsync();
+        //    return await _context.Locations.ToListAsync();
         //}
 
-        // GET: api/UserFriends/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserFriend>> GetUserFriend(Guid id)
+        // GET: api/Locations/5
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<Location>> GetLocation(Guid userId)
         {
-            var userFriend = await _context.UserFriends.FindAsync(id);
+            var location = await _context.Locations.FirstOrDefaultAsync(l => l.UserId == userId);
 
-            if (userFriend == null)
+            if (location == null)
             {
                 return NotFound();
             }
 
-            return userFriend;
+            return location;
         }
 
-        // PUT: api/UserFriends/5
+        // PUT: api/Locations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutUserFriend(UserFriend userFriend)
+        public async Task<IActionResult> PutLocation(Location location)
         {
-            _context.Entry(userFriend).State = EntityState.Modified;
+            _context.Entry(location).State = EntityState.Modified;
 
             try
             {
@@ -49,7 +49,7 @@ namespace PupaLupaServer.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserFriendExists(userFriend.UserId))
+                if (!LocationExists(location.UserId))
                 {
                     return NotFound();
                 }
@@ -62,19 +62,20 @@ namespace PupaLupaServer.Controllers
             return NoContent();
         }
 
-        // POST: api/UserFriends
+        // POST: api/Locations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //[HttpPost]
-        //public async Task<ActionResult<UserFriend>> PostUserFriend(UserFriend userFriend)
+        //public async Task<ActionResult<Location>> PostLocation(Location location)
         //{
-        //    _context.UserFriends.Add(userFriend);
+        //    _context.Locations.Add(location);
+
         //    try
         //    {
         //        await _context.SaveChangesAsync();
         //    }
         //    catch (DbUpdateException)
         //    {
-        //        if (UserFriendExists(userFriend.UserId))
+        //        if (LocationExists(location.ObjectId))
         //        {
         //            return Conflict();
         //        }
@@ -84,28 +85,28 @@ namespace PupaLupaServer.Controllers
         //        }
         //    }
 
-        //    return CreatedAtAction("GetUserFriend", new { id = userFriend.UserId }, userFriend);
+        //    return CreatedAtAction("PostLocation", location);
         //}
 
-        // DELETE: api/UserFriends/5
+        // DELETE: api/Locations/5
         //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUserFriend(Guid id)
+        //public async Task<IActionResult> DeleteLocation(Guid id)
         //{
-        //    var userFriend = await _context.UserFriends.FindAsync(id);
-        //    if (userFriend == null)
+        //    var location = await _context.Locations.FindAsync(id);
+        //    if (location == null)
         //    {
         //        return NotFound();
         //    }
 
-        //    _context.UserFriends.Remove(userFriend);
+        //    _context.Locations.Remove(location);
         //    await _context.SaveChangesAsync();
 
         //    return NoContent();
         //}
 
-        private bool UserFriendExists(Guid id)
+        private bool LocationExists(Guid id)
         {
-            return _context.UserFriends.Any(e => e.UserId == id);
+            return _context.Locations.Any(e => e.UserId == id);
         }
     }
 }

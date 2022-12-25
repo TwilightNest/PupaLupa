@@ -17,13 +17,15 @@ public partial class PupaLupaDbContext : DbContext
 
     public virtual DbSet<InboxParticipant> InboxParticipants { get; set; }
 
+    public virtual DbSet<Location> Locations { get; set; }
+
     public virtual DbSet<Message> Messages { get; set; }
 
+    public virtual DbSet<Relationship> Relationships { get; set; }
+
+    public virtual DbSet<Statistic> Statistics { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
-
-    public virtual DbSet<UserFriend> UserFriends { get; set; }
-
-    public virtual DbSet<UsersLocation> UsersLocations { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -68,6 +70,17 @@ public partial class PupaLupaDbContext : DbContext
                 .HasConstraintName("InboxParticipants_Users_FK");
         });
 
+        modelBuilder.Entity<Location>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("Locations_PK");
+
+            entity.Property(e => e.UserId)
+                .ValueGeneratedNever()
+                .HasColumnName("userId");
+            entity.Property(e => e.Latitude).HasColumnName("latitude");
+            entity.Property(e => e.Longitude).HasColumnName("longitude");
+        });
+
         modelBuilder.Entity<Message>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Messages_PK");
@@ -93,6 +106,39 @@ public partial class PupaLupaDbContext : DbContext
                 .HasConstraintName("Messages_Users_FK");
         });
 
+        modelBuilder.Entity<Relationship>(entity =>
+        {
+            entity.HasKey(e => new { e.FirstUserId, e.SecondUserId }).HasName("Relationships_PK");
+
+            entity.HasIndex(e => e.StatisticsId, "fki_RelationshipsStatistics_FK");
+
+            entity.HasIndex(e => e.SecondUserId, "fki_Relationships_PK");
+
+            entity.Property(e => e.FirstUserId).HasColumnName("firstUserId");
+            entity.Property(e => e.SecondUserId).HasColumnName("secondUserId");
+            entity.Property(e => e.StatisticsId).HasColumnName("statisticsId");
+
+            entity.HasOne(d => d.Statistics).WithMany(p => p.Relationships)
+                .HasForeignKey(d => d.StatisticsId)
+                .HasConstraintName("RelationshipsStatistics_FK");
+        });
+
+        modelBuilder.Entity<Statistic>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Statistics_PK");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("id");
+            entity.Property(e => e.FirstMetDate).HasColumnName("firstMetDate");
+            entity.Property(e => e.MeetingsCount).HasColumnName("meetingsCount");
+            entity.Property(e => e.MessagesCount).HasColumnName("messagesCount");
+            entity.Property(e => e.RelationType).HasColumnName("relationType");
+            entity.Property(e => e.TimeTogether)
+                .HasComment("hoursCount")
+                .HasColumnName("timeTogether");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("users_PK");
@@ -106,35 +152,6 @@ public partial class PupaLupaDbContext : DbContext
                 .HasColumnName("login");
             entity.Property(e => e.Password).HasColumnName("password");
             entity.Property(e => e.PhoneNumber).HasColumnName("phoneNumber");
-        });
-
-        modelBuilder.Entity<UserFriend>(entity =>
-        {
-            entity.HasKey(e => e.UserId).HasName("Friends_PK");
-
-            entity.Property(e => e.UserId)
-                .ValueGeneratedNever()
-                .HasColumnName("userId");
-            entity.Property(e => e.FriendsIds).HasColumnName("friendsIds");
-        });
-
-        modelBuilder.Entity<UsersLocation>(entity =>
-        {
-            entity.HasKey(e => e.UserId).HasName("usersLocations_PK");
-
-            entity.ToTable("UsersLocation");
-
-            entity.HasIndex(e => e.UserId, "fki_usersLocation_FK");
-
-            entity.Property(e => e.UserId)
-                .ValueGeneratedNever()
-                .HasColumnName("userId");
-            entity.Property(e => e.Latitude)
-                .HasComment("Ширина")
-                .HasColumnName("latitude");
-            entity.Property(e => e.Longitude)
-                .HasComment("Долгота")
-                .HasColumnName("longitude");
         });
 
         OnModelCreatingPartial(modelBuilder);
