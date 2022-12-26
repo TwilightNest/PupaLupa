@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PupaLupaServer.Models;
 using PupaLupaServer.Models.EF;
 
 namespace PupaLupaServer.Controllers
@@ -24,10 +22,10 @@ namespace PupaLupaServer.Controllers
         //}
 
         // GET: api/Statistics/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Statistic>> GetStatistic(Guid id)
+        [HttpGet("{statisticId}")]
+        public async Task<ActionResult<Statistic>> GetStatistic(Guid statisticId)
         {
-            var statistic = await _context.Statistics.FindAsync(id);
+            var statistic = await _context.Statistics.FindAsync(statisticId);
 
             if (statistic == null)
             {
@@ -70,29 +68,29 @@ namespace PupaLupaServer.Controllers
 
         // POST: api/Statistics
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Statistic>> PostStatistic(StatisticModel statisticModel)
-        {
-            var newStatistic = statisticModel.ToStatistic();
-            _context.Statistics.Add(newStatistic);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (StatisticExists(newStatistic.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //[HttpPost]
+        //public async Task<ActionResult<Statistic>> PostStatistic(StatisticModel statisticModel)
+        //{
+        //    var newStatistic = statisticModel.ToStatistic();
+        //    _context.Statistics.Add(newStatistic);
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (StatisticExists(newStatistic.Id))
+        //        {
+        //            return Conflict();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return CreatedAtAction("PostStatistic", newStatistic);
-        }
+        //    return CreatedAtAction("PostStatistic", newStatistic);
+        //}
 
         // DELETE: api/Statistics/5
         //[HttpDelete("{id}")]

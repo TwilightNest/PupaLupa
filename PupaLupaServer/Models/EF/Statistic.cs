@@ -16,6 +16,4 @@ public partial class Statistic
     public long? MessagesCount { get; set; }
 
     public int? MeetingsCount { get; set; }
-
-    public virtual ICollection<Relationship> Relationships { get; } = new List<Relationship>();
 }

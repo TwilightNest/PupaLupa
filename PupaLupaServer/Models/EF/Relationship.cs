@@ -2,11 +2,9 @@
 
 public partial class Relationship
 {
-    public Guid FirstUserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public Guid SecondUserId { get; set; }
+    public Guid FriendId { get; set; }
 
     public Guid? StatisticsId { get; set; }
-
-    public virtual Statistic? Statistics { get; set; }
 }
