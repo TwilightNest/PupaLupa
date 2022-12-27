@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace PupaLupaServer.Models.EF;
 
@@ -62,6 +64,7 @@ public partial class PupaLupaDbContext : DbContext
             entity.Property(e => e.ChatId)
                 .ValueGeneratedNever()
                 .HasColumnName("chatId");
+            entity.Property(e => e.Created).HasColumnName("created");
             entity.Property(e => e.MessageBody).HasColumnName("messageBody");
             entity.Property(e => e.SenderUserId).HasColumnName("senderUserId");
         });

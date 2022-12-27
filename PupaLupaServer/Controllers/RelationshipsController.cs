@@ -68,39 +68,8 @@ namespace PupaLupaServer.Controllers
         [HttpPost]
         public async Task<ActionResult<Relationship>> PostRelationship(Relationship relationship)
         {
-            //check relation exists
-            var existingRelationship = await _context.Relationships.FirstOrDefaultAsync(r => r.UserId == relationship.FriendId);
-            if (existingRelationship != null)
-            {
-                //update first statistic
-                _context.Relationships.Add(relationship);
-                var oldStatistic = await _context.Statistics.FirstOrDefaultAsync(s => s.Id == existingRelationship.StatisticsId);
-                oldStatistic.RelationType = (short)RelationType.Friends;
-                _context.Entry(oldStatistic).State = EntityState.Modified;
-                //initialize second statistic
-                var statistic = new Statistic();
-                statistic.Id = Guid.NewGuid();
-                statistic.RelationType = (short)RelationType.Friends;
-                statistic.TimeTogether = 0;
-                statistic.FirstMetDate = DateTime.Now.ToUniversalTime();
-                statistic.MessagesCount = 0;
-                statistic.MeetingsCount = 0;
-                _context.Statistics.Add(statistic);
-            }
-            else
-            {
-                //add relationship
-                _context.Relationships.Add(relationship);
-                //initialize first statistic
-                var statistic = new Statistic();
-                statistic.Id = Guid.NewGuid();
-                statistic.RelationType = (short)RelationType.NotFriendsYet;
-                statistic.TimeTogether = 0;
-                statistic.FirstMetDate = DateTime.Now.ToUniversalTime();
-                statistic.MessagesCount = 0;
-                statistic.MeetingsCount = 0;
-                _context.Statistics.Add(statistic);
-            }
+            //add relationship
+            _context.Relationships.Add(relationship);
 
             try
             {
@@ -108,7 +77,7 @@ namespace PupaLupaServer.Controllers
             }
             catch (DbUpdateException)
             {
-                if (RelationshipExists(relationship.UserId))
+                if (RelationshipExists(relationship.UserId, relationship.FriendId))
                 {
                     return Conflict();
                 }
@@ -117,6 +86,19 @@ namespace PupaLupaServer.Controllers
                     throw;
                 }
             }
+
+            //initialize statistic
+            var statistic = new Statistic();
+            statistic.Id = new Guid(relationship.StatisticsId.ToString());
+            statistic.RelationType = (short)RelationType.NotFriendsYet;
+            statistic.TimeTogether = 0;
+            statistic.FirstMetDate = DateTime.Now.ToUniversalTime();
+            statistic.MessagesCount = 0;
+            statistic.MeetingsCount = 0;
+            _context.Statistics.Add(statistic);
+            await _context.SaveChangesAsync();
+
+            CheckFriends(relationship.UserId, relationship.FriendId);
 
             return CreatedAtAction("PostRelationship", relationship);
         }
@@ -137,9 +119,31 @@ namespace PupaLupaServer.Controllers
         //    return NoContent();
         //}
 
-        private bool RelationshipExists(Guid id)
+        private bool RelationshipExists(Guid userId, Guid friendId)
         {
-            return _context.Relationships.Any(e => e.UserId == id);
+            return _context.Relationships.Any(r => r.UserId == userId && r.FriendId == friendId);
+        }
+
+        private void CheckFriends(Guid userId, Guid friendId)
+        {
+            //if become friends
+            if (RelationshipExists(userId, friendId) && RelationshipExists(friendId, userId))
+            {
+                //update statistic
+                var firstStatisticId = _context.Relationships.FirstOrDefault(r => r.UserId == userId && r.FriendId == friendId).StatisticsId;
+                var secondStatisticId = _context.Relationships.FirstOrDefault(r => r.UserId == friendId && r.FriendId == userId).StatisticsId;
+
+                var firstStatisticRecord = _context.Statistics.FirstOrDefault(s => s.Id == firstStatisticId);
+                var secondStatisticRecord = _context.Statistics.FirstOrDefault(s => s.Id == secondStatisticId);
+
+                firstStatisticRecord.RelationType = (short)RelationType.Friends;
+                secondStatisticRecord.RelationType = (short)RelationType.Friends;
+
+                _context.Entry(firstStatisticRecord).State = EntityState.Modified;
+                _context.Entry(secondStatisticRecord).State = EntityState.Modified;
+
+                _context.SaveChanges();
+            }
         }
     }
 }

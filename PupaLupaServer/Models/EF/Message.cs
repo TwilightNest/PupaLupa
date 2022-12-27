@@ -1,4 +1,7 @@
-﻿namespace PupaLupaServer.Models.EF;
+﻿using System;
+using System.Collections.Generic;
+
+namespace PupaLupaServer.Models.EF;
 
 public partial class Message
 {
@@ -7,4 +10,6 @@ public partial class Message
     public Guid? SenderUserId { get; set; }
 
     public string? MessageBody { get; set; }
+
+    public DateTime? Created { get; set; }
 }
