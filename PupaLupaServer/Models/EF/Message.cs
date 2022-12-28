@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PupaLupaServer.Models.EF;
+﻿namespace PupaLupaServer.Models.EF;
 
 public partial class Message
 {
